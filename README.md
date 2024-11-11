@@ -48,3 +48,9 @@ For assistance or to purchase this extension, please reach out to me on [Discord
 - **Redistribution:** This is a commercial extension. You are not permitted to redistribute, resell, or share this extension in any form.
 - **Modifications:** Any modifications to the code are not supported, and you assume all responsibility for any issues that arise from changes made to the extension.
 - **Trademarks:** The PhonePe name and logo are trademarks of PhonePe Pvt Ltd. This project is not affiliated with or endorsed by PhonePe.
+
+## Changelog
+
+### v1.0.0
+- Initial release of PhonePe Payment Gateway integration for Paymenter
+- Supports Paymenter  v0.9.5
