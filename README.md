@@ -52,3 +52,8 @@ For assistance or to purchase this extension, please reach out to me on [Discord
 ### v1.0.0
 - Initial release of PhonePe Payment Gateway integration for Paymenter
 - Supports Paymenter  v0.9.5
+
+### v1.0.1
+- Modify archive script to include logo and README
+- Remove unneeded install instruction from README
+- Remove alt text from logo in README
