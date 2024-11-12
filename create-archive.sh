@@ -26,6 +26,8 @@ fi
 mkdir PhonePe
 cp PhonePe.php PhonePe
 cp routes.php PhonePe
+cp phonepe.svg PhonePe
+cp README.md PhonePe
 zip -r PhonePe.zip PhonePe
 rm -r PhonePe
 echo "Archive created successfully."
