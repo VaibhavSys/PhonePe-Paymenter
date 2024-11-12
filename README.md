@@ -13,8 +13,6 @@ A simple extension to integrate PhonePe as a payment gateway within your Payment
 - Default Paymenter Webroot: `/var/www/paymenter`
 - Gateway Directory: `/var/www/paymenter/app/Extensions/Gateways`
 
-1. Navigate to your paymenter webroot and run the command: `php artisan p:extension:create`
-1. Fill `PhonePe` as the name of the extension, and select Gateway in type
 1. Navigate to Gateway Directory and unarchive the zip file
 1. Go to Paymenter Admin -> Extensions -> PhonePe -> Edit
 1. Enable the extension and setup your PhonePe credentials
