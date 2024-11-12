@@ -1,6 +1,6 @@
 ## PhonePe Payment Gateway for Paymenter
 
-![PhonePe Logo](phonepe.svg)
+![](phonepe.svg)
 
 A simple extension to integrate PhonePe as a payment gateway within your Paymenter platform, making it easy for customers to pay via PhonePe for a smooth, convenient checkout experience.
 
