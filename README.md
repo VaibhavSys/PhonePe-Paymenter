@@ -8,12 +8,8 @@ A simple extension to integrate PhonePe as a payment gateway within your Payment
 - **Supported Version:** Paymenter v0.9.5
 - **Compatibility Note:** This extension is officially supported only on Paymenter v0.9.5. While it may work on other versions, there is no guarantee or support provided for versions other than v0.9.5.
 
-## Installation
+## Setup
 
-- Default Paymenter Webroot: `/var/www/paymenter`
-- Gateway Directory: `/var/www/paymenter/app/Extensions/Gateways`
-
-1. Navigate to Gateway Directory and unarchive the zip file
 1. Go to Paymenter Admin -> Extensions -> PhonePe -> Edit
 1. Enable the extension and setup your PhonePe credentials
 1. You are now ready to accept payments using the PhonePe Gateway!
@@ -35,16 +31,13 @@ This extension requires sensitive information, such as your PhonePe Merchant ID 
 
 - Always store these credentials securely and confidentially.
 
-## Support and Purchase
+## Support
 
-For assistance or to purchase this extension, please reach out to me on [Discord: @vaibhavd](https://discord.com/users/914452175839723550).
+For assistance, please reach out to me on [Discord: @vaibhavd](https://discord.com/users/914452175839723550).
 
-> **Note:** Support is not provided for installations or extensions that have been modified. Any alterations to the code are at your own risk, and I am not responsible for any issues or malfunctions caused by such modifications.
+## License
 
-## License and Restrictions
-
-- **Redistribution:** This is a commercial extension. You are not permitted to redistribute, resell, or share this extension in any form.
-- **Modifications:** Any modifications to the code are not supported, and you assume all responsibility for any issues that arise from changes made to the extension.
+- **License:** This is a opensource extension licensed under the [MIT License](LICENSE). The extension is opensource on GitHub: [PhonePe Paymenter GitHub](https://github.com/VaibhavSys/PhonePe-Paymenter)
 - **Trademarks:** The PhonePe name and logo are trademarks of PhonePe Pvt Ltd. This project is not affiliated with or endorsed by PhonePe.
 
 ## Changelog
@@ -57,3 +50,6 @@ For assistance or to purchase this extension, please reach out to me on [Discord
 - Modify archive script to include logo and README
 - Remove unneeded install instruction from README
 - Remove alt text from logo in README
+
+### v1.0.2
+- Opensource the extension under MIT license
