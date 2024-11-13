@@ -19,7 +19,7 @@ class PhonePe extends Gateway {
             'display_name' => 'PhonePe',
             'version' => '1.0.2',
             'author' => 'Vaibhav',
-            'website' => 'https://github.com/VaibhavSys',
+            'website' => 'https://github.com/VaibhavSys/PhonePe-Paymenter',
         ];
     }
 
