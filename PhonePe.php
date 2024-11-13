@@ -17,7 +17,7 @@ class PhonePe extends Gateway {
     public function getMetadata() {
         return [
             'display_name' => 'PhonePe',
-            'version' => '1.0.1',
+            'version' => '1.0.2',
             'author' => 'Vaibhav',
             'website' => 'https://github.com/VaibhavSys',
         ];
