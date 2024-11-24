@@ -17,7 +17,7 @@ class PhonePe extends Gateway {
     public function getMetadata() {
         return [
             'display_name' => 'PhonePe',
-            'version' => '1.0.2',
+            'version' => '1.0.3',
             'author' => 'Vaibhav',
             'website' => 'https://github.com/VaibhavSys/PhonePe-Paymenter',
         ];
@@ -139,7 +139,7 @@ class PhonePe extends Gateway {
         }
 
         $payload = json_decode(base64_decode($response), true);
-        if ($payload['success'] !== true) {
+        if ($payload['code'] !== 'PAYMENT_SUCCESS') {
             ExtensionHelper::error('PhonePe', 'Payment failed', $payload);
             return;
         }
