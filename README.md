@@ -39,17 +39,3 @@ For assistance, please reach out to me on [Discord: @vaibhavd](https://discord.c
 
 - **License:** This is a opensource extension licensed under the [MIT License](LICENSE). The extension is opensource on GitHub: [PhonePe Paymenter GitHub](https://github.com/VaibhavSys/PhonePe-Paymenter)
 - **Trademarks:** The PhonePe name and logo are trademarks of PhonePe Pvt Ltd. This project is not affiliated with or endorsed by PhonePe.
-
-## Changelog
-
-### v1.0.0
-- Initial release of PhonePe Payment Gateway integration for Paymenter
-- Supports Paymenter  v0.9.5
-
-### v1.0.1
-- Modify archive script to include logo and README
-- Remove unneeded install instruction from README
-- Remove alt text from logo in README
-
-### v1.0.2
-- Opensource the extension under MIT license
