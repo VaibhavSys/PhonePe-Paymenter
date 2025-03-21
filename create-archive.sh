@@ -24,6 +24,7 @@ if [ -f "PhonePe.zip" ]; then
 fi
 
 mkdir PhonePe
+cp assets PhonePe
 cp PhonePe.php PhonePe
 cp routes.php PhonePe
 cp phonepe.svg PhonePe
