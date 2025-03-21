@@ -1,6 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Extensions\Gateways\PhonePe\PhonePe;
+use Paymenter\Extensions\Gateways\PhonePe\PhonePe;
 
-Route::post('/phonepe/webhook', [PhonePe::class, 'webhook'])->name('phonepe.webhook');
+Route::post('/phonepe/webhook', [PhonePe::class, 'webhook'])->name('extensions.gateways.phonepe.webhook');

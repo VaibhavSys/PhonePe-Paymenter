@@ -1,92 +1,109 @@
 <?php
 
-namespace App\Extensions\Gateways\PhonePe;
+namespace Paymenter\Extensions\Gateways\PhonePe;
 
-use App\Classes\Extensions\Gateway;
-use App\Helpers\ExtensionHelper;
-use App\Models\Invoice;
+use App\Classes\Extension\Gateway;
 use Illuminate\Support\Facades\Http;
+use App\Helpers\ExtensionHelper;
 use Illuminate\Http\Request;
+use App\Models\Invoice;
+use Illuminate\Support\Facades\Log;
 
-class PhonePe extends Gateway {
-    /**
-    * Get the extension metadata
-    * 
-    * @return array
-    */
-    public function getMetadata() {
-        return [
-            'display_name' => 'PhonePe',
-            'version' => '1.0.3',
-            'author' => 'Vaibhav',
-            'website' => 'https://github.com/VaibhavSys/PhonePe-Paymenter',
-        ];
+class PhonePe extends Gateway
+{
+
+    public function boot()
+    {
+        require __DIR__ . '/routes.php';
     }
 
     /**
      * Get all the configuration for the extension
      * 
+     * @param array $values
      * @return array
      */
-    public function getConfig(){
+    public function getConfig($values = [])
+    {
         return [
             [
                 'name' => 'mid',
+                'label' => 'Merchant ID',
                 'type' => 'text',
-                'friendlyName' => 'Merchant ID',
                 'required' => true,
             ],
             [
                 'name' => 'salt_key',
+                'label' => 'Salt Key',
                 'type' => 'text',
-                'friendlyName' => 'Salt Key',
                 'required' => true,
             ],
             [
                 'name' => 'salt_index',
+                'label' => 'Salt Index',
                 'type' => 'text',
-                'friendlyName' => 'Salt Index',
                 'required' => true,
             ],
             [
                 'name' => 'order_prefix',
+                'label' => 'Order Prefix',
                 'type' => 'text',
-                'friendlyName' => 'Order Prefix',
                 'required' => false,
             ],
             [
                 'name' => 'live',
-                'type' => 'boolean',
-                'friendlyName' => 'Live Mode',
+                'label' => 'Live Mode',
+                'type' => 'checkbox',
                 'required' => false,
+            ],
+            [
+                'name' => 'allow_foreign_currency',
+                'label' => 'Allow Foreign Currency',
+                'type' => 'checkbox',
             ]
         ];
     }
     
     /**
-     * Get the URL to redirect to
+     * Return a view or a url to redirect to
      * 
-     * @param int $total
-     * @param array $products
-     * @param int $invoiceId
+     * @param Invoice $invoice
+     * @param float $total
      * @return string
      */
-    public function pay($total, $products, $invoiceId) {
-        $mid = ExtensionHelper::getConfig('PhonePe', 'mid');
-        $saltKey = ExtensionHelper::getConfig('PhonePe', 'salt_key');
-        $saltIndex = ExtensionHelper::getConfig('PhonePe', 'salt_index');
-        $orderPrefix = ExtensionHelper::getConfig('PhonePe', 'order_prefix');
+    public function pay($invoice, $total)
+    {
+        $mid = $this->config['mid'];
+        $saltKey = $this->config['salt_key'];
+        $saltIndex = $this->config['salt_index'];
+        $orderPrefix = $this->config['order_prefix'];
+        $orderId = $orderPrefix . $invoice->id;
+        $amount = $total * 100;
+        $redirect = route('invoices.show', ['invoice' => $invoice->id]);
+        $callback = route('extensions.gateways.phonepe.webhook');
         $url = $this->getEndpoint();
-        $orderId = $orderPrefix . $invoiceId;
-        $invoice = Invoice::find($invoiceId);
-        $amount = $total * 100; // Paise
-        $redirect = route('clients.invoice.show', $invoiceId);
-        $callback = route('phonepe.webhook');
+        $allowForeignCurrency = $this->config('allow_foreign_currency');
+
+        if (!$allowForeignCurrency && $invoice->currency_code != 'INR') {
+            Log::info('Foreign currency not allowed');
+            return redirect()->route('invoices.show', ['invoice' => $invoice->id])->with('notification', [
+                'message' => 'Foreign currency not allowed',
+                'type' => 'error',
+            ]);
+        }
+
+        if ($amount <= 0) {
+            return redirect()->route('invoices.show', ['invoice' => $invoice->id])->with('notification', [
+                'type' => 'error',
+                'message' => 'Invalid amount',
+            ]);
+        }
+
         $data = [
             'merchantId' => $mid,
             'merchantTransactionId' => $orderId,
             'amount' => $amount,
-            'merchantUserId' => $invoice,
+            'merchantUserId' => $invoice->user_id,
             'redirectUrl' => $redirect,
             'redirectMode' => 'REDIRECT',
             'callbackUrl' => $callback,
@@ -105,8 +122,10 @@ class PhonePe extends Gateway {
         ])->post($url, $payload);
         $responseJson = $response->json();
         if ($response->failed() || $responseJson['success'] !== true) {
-            ExtensionHelper::error('PhonePe', 'Payment Failed for invoice ' . $invoiceId, $responseJson);
-            return redirect()->route('clients.invoice.show', $invoiceId)->with('error', 'Payment failed');
+            return redirect()->route('clients.invoice.show', $invoice->id)->with('notification', [
+                'type' => 'error',
+                'message' => 'Payment failed',
+            ]);
         }
         
         $paymentUrl = $responseJson['data']['instrumentResponse']['redirectInfo']['url'];
@@ -115,32 +134,32 @@ class PhonePe extends Gateway {
     }
 
     public function getEndpoint() {
-        $live = ExtensionHelper::getConfig('PhonePe', 'live');
+        $live = $this->config('live');
         return $live ? 'https://api.phonepe.com/apis/hermes/pg/v1/pay' : 'https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay';
     }
 
-    public static function extractInvoiceId($orderId)
+    public function extractInvoiceId($orderId)
     {
-        $orderPrefix = ExtensionHelper::getConfig('PhonePe', 'order_prefix');
+        $orderPrefix = $this->config('order_prefix');
         $invoiceId = (int) substr($orderId, strlen($orderPrefix));
         return $invoiceId;
     }
 
     public function webhook(Request $request) {
-        $saltKey = ExtensionHelper::getConfig('PhonePe', 'salt_key');
-        $saltIndex = ExtensionHelper::getConfig('PhonePe', 'salt_index');
+        $saltKey = $this->config('salt_key');
+        $saltIndex = $this->config('salt_index');
         $posted = $request->all();
         $response = $posted['response'];
         $checksum = $request->header('X-VERIFY');
         $expectedChecksum = hash('sha256', $response . $saltKey) . '###' . $saltIndex;
         if ($checksum !== $expectedChecksum) {
-            ExtensionHelper::error('PhonePe', 'Checksum mismatch', ['response' => $response, 'checksum' => $checksum, 'expected' => $expectedChecksum]);
+            throw new \Exception('PhonePe: Checksum mismatch: Posted: ' . json_encode($posted) . ' ' . $checksum . ' !== ' . $expectedChecksum);
             return;
         }
 
         $payload = json_decode(base64_decode($response), true);
         if ($payload['code'] !== 'PAYMENT_SUCCESS') {
-            ExtensionHelper::error('PhonePe', 'Payment failed', $payload);
+            throw new \Exception('PhonePe: Payment Failed: ' . json_encode($payload));
             return;
         }
 
@@ -148,9 +167,12 @@ class PhonePe extends Gateway {
         $invoiceId = $this->extractInvoiceId($orderId);
         $invoice = Invoice::find($invoiceId);
         if (!$invoice) {
-            ExtensionHelper::error('PhonePe', 'Invoice not found', ['invoiceId' => $invoiceId]);
+            throw new \Exception('PhonePe: Invoice not found: ' . $invoiceId);
             return;
         }
-        ExtensionHelper::paymentDone($invoiceId, 'PhonePe', $orderId);
+
+        $amountPaid = $payload['data']['amount'] / 100;
+
+        ExtensionHelper::addPayment($invoiceId, 'PhonePe', $amountPaid, null, $orderId);
     }
 }
