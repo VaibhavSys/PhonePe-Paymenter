@@ -5,7 +5,7 @@
 A simple extension to integrate PhonePe as a payment gateway within your Paymenter platform, making it easy for customers to pay via PhonePe for a smooth, convenient checkout experience.
 
 ## Supported Versions
-> The latest version which supports Paymenter v0.9.5 is [v1.0.3](https://github.com/VaibhavSys/PhonePe-Paymenter/tree/v1.0.3)
+> The latest version which supported Paymenter v0.9.5 is [v1.0.3](https://github.com/VaibhavSys/PhonePe-Paymenter/tree/v1.0.3)
 - **Supported Version:** Paymenter V1 Beta
 - **Extension Version:** 2.0.0
 
